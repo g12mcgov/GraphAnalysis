@@ -70,21 +70,6 @@ public class WFUWWWNetwork {
 		}
 		float average = sum / numvertex;   
 	    System.out.println("Average value of interactions is : " + average);
-	    
-		//Question 3
-//		int[] highinteractions = new int[100];
-//		int d = 0;
-//		for(int a = 0; a < numvertex + 1 ; a++){
-//			int temp = nodearray[a].getedgeNodes();
-//			if (temp > 3){
-//				highinteractions[d] = a;
-//				d++;
-//			}
-//		}
-//		System.out.println("High Interactions");
-//		System.out.println(Arrays.toString(highinteractions));
-//		//	
-
 	}
 
 }
