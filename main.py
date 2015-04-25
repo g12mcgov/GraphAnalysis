@@ -18,26 +18,26 @@ def getDegrees(graph, nodes):
     outdegree = 0
     indegree = 0
 
-    node_list = []
+    nodeDictList = []
 
     for node in nodes:
-        node_info = {}
+        degrees = {}
 
-        for item in graph.edges():
-            if item[0] == node:
-                outdegree += 1
-            if item[1] == node:
-                indegree +=1 
+        edges = graph.edges()
 
-        node_info["node"] = node
-        node_info["outdegree"] = outdegree
-        node_info["indegree"] = indegree
+        for edge in edges:
+            if edge[0] == node: outdegree += 1
+            if edge[1] == node: indegree +=1 
 
-        node_list.append(node_info)
+        degrees["node"] = node
+        degrees["outdegree"] = outdegree
+        degrees["indegree"] = indegree
+
+        nodeDictList.append(node_info)
 
         indegree = outdegree = 0
 
-    return node_list
+    return nodeDictList
 
 def printNodes(nodes):
     """ Prints all of the nodes in the graph and their neighbors """
