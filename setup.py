@@ -1,10 +1,15 @@
 #!/usr/local/bin/python
 
-## 
-## Created by: Grant McGovern 
-## Date: 30 March 20145
-## Purpose: Setup environment for Lab 4.
-## 
+#
+#   setup.py
+#
+#   Author: Grant McGovern
+#   Date: 26 April 2015
+#
+#   CSC 222 [] Lab 4 : Graph Exploration
+#
+#
+#
 
 from setuptools import setup, find_packages
 

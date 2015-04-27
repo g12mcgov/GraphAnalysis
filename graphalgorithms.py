@@ -1,208 +1,109 @@
+#
+#   graphalgorithms.py
+#
+#   Author: Grant McGovern
+#   Date: 26 April 2015
+#
+#   CSC 222 [] Lab 4 : Graph Exploration
+#
+#
+#
+
 import heapq
 from Graphs.graph import *
-from Graphs.directedgraph import *
 from collections import deque
+from Graphs.directedgraph import *
 
 def dfs(g, start_node = None):
-    """Runs Depth First Search on a graph.
-    
-    Args:
-    - g: A directed or undirected graph.
-    - start_node: A node of g from where the search will start.
-    If this is None, the search will start from a random node of g.
-    
-    Return value:
-    A list of nodes in the order visited.
-    """
+    """ Depth First Search for a graph. """
     
     if not start_node is None and not start_node in g.nodes():
         raise GraphValueError('start node does not exist')
         
     visited = {}
-    for n in g.nodes():
-        visited[n] = False
+
+    for node in g.nodes(): visited[node] = False
         
-    if start_node is None:
-        start_node = n
+    if start_node is None: start_node = node
         
-    q = deque([start_node])
+    item = deque([start_node])
     output = []
     
-    while len(q) > 0:
+    while len(item) > 0:
         # Pop from the right (top of queue)
-        n = q.pop()
-        if not visited[n]:
-            output.append(n)
-            visited[n] = True
-            for adj in g.neighbors(n):
-                if not visited[adj]:
-                    # Append to the right (top of queue)
-                    q.append(adj)
+        node = item.pop()
+        if not visited[node]:
+            output.append(node)
+            visited[node] = True
+            for adj in g.neighbors(node):
+                if not visited[adj]: item.append(adj)
+    
     return output
 
-def dijkstra(g, start_node, end_node = None):
-    """Finds shortest paths from a given node using Dijkstra's algorithm.
+def dijkstra(g, start_node, end_node=None):
+    """ Finds the shortest path between two nodes"""
     
-    Args:
-    - g: graph object. It should not contain negative edges (at least
-    not in the part reachable from start_node).
-    - start_node: node of g from which shortest paths will be computed
-    - end_node: if this is None, then shortest paths to all nodes reachable
-    from start_node will be computed. Otherwise, only the shortest path to
-    end_node will be computed.
+    _nodes_ = g.nodes()
+
+    if not start_node in _nodes_: 
+        pass
+    if not end_node is None and not end_node in _nodes_: 
+        pass
     
-    Return value:
-    A tuple (dist, previous) where:
-    - dist is a dictionary if end_node is None, such that dist[n] is the 
-    distance of the shortest path to n. If end_node is not None, then
-    dist is just the distance from start_node to end_node.
-    - previous is a dictionary, such that previous[n] is the previous node
-    in the path from start_node to n.
-    """
-    
-    if not start_node in g.nodes():
-        raise GraphValueError('start node does not exist')
-    if not end_node is None and not end_node in g.nodes():
-        raise GraphValueError('end node does not exist')
-    
-    # Dictionary of the distance of each node from start
-    dist = {}
+    distance = {}
     previous = {}
+    
     for n in g.nodes():
         previous[n] = None
-        dist[n] = float('inf')
+        distance[n] = float('inf')
         
-    # Also put the distances in a heap, so you can easily get the 
-    # node with minimum distance. The items in the heap have the form
-    # (dist, node_index).
-    dist_heap = []
-    heapq.heappush(dist_heap, (0, start_node))
     
-    while len(dist_heap) > 0:
-        node_dist = heapq.heappop(dist_heap)        
-        n = node_dist[1]
-        # Normally, we would not extract from the heap the same node
-        # twice. However, in this implementation, we don't decrease the
-        # nodes keys in the heap, rather we add copies with smaller keys.
-        # This is not very efficient but we avoid having to track where
-        # each node is stored in the heap.
-        # TODO: Re-implement heap to make this easier. 
-        if node_dist[0] >= dist[n]:
-            continue
-        dist[n] = node_dist[0]
-        if n == end_node:
-            break
+    # Uses heap queue module
+    distance_heap = []
+    heapq.heappush(distance_heap, (0, start_node))
+    
+    while len(distance_heap) > 0:
+        node_distance = heapq.heappop(distance_heap)        
+        n = node_distance[1]
+       
+        if (node_distance[0]) >= (distance[n]): continue
+        
+        distance[n] = node_distance[0]
+        
+        if n == end_node: break
+        
         for adj in g.weighted_neighbors(n):
             adj_node = adj[0]
             edge_weight = adj[1]
-            if edge_weight < 0:
-                raise UnsupportedGraphType('Dijkstra\'s algorithm does not support negative edges') 
-            new_dist = dist[n] + edge_weight
-            if dist[adj_node] > new_dist:
+
+            if edge_weight < 0: raise Exception('Cannot perform Dijkstra\'s algorithm on negative edges') 
+            
+            new_distance = distance[n] + edge_weight
+            
+            if distance[adj_node] > new_distance:
                 previous[adj_node] = n
-                heapq.heappush(dist_heap, (new_dist, adj_node))
+                heapq.heappush(distance_heap, (new_distance, adj_node))
                 
-    if end_node is None:
-        return (dist, previous)
+    if end_node is None: 
+        return (distance, previous)
     else:
-        return (dist[end_node], previous)
+        return (distance[end_node], previous)
 
-def shortest_path(g, start_node, end_node = None):
-    """Finds shortest paths from a given node.
-    
-    Args:
-    - g: graph object. It should not contain negative cycles (at least
-    not in the part reachable from start_node).
-    - start_node: node of g from which shortest paths will be computed
-    - end_node: if this is None, then shortest paths to all nodes reachable
-    from start_node will be computed. Otherwise, only the shortest path to
-    end_node will be computed.
-    
-    Return value:
-    A tuple (dist, previous) where:
-    - dist is a dictionary if end_node is None, such that dist[n] is the 
-    distance of the shortest path to n. If end_node is not None, then
-    dist is just the distance from start_node to end_node.
-    - previous is a dictionary, such that previous[n] is the previous node
-    in the path from start_node to n.
-    """
-    has_neg_edge = False
-    for e in g.edges():
-        if e[2] < 2:
-            has_neg_edge = True
-            break
-    
-    if has_neg_edge:
-        (dist, previous) = bellman_ford(g, start_node)
-        if not end_node is None:
-            dist = dist[end_node]
-    else:
-        (dist, previous) = dijkstra(g, start_node, end_node)
-    return (dist, previous)
-
-def all_shortest_paths(g):
-    raise GraphFunctionNotImplemented('')
 
 def incomingEdges(g):
     if isinstance(g, Graph):
-        raise UnsupportedGraphType('spanning tree not defined for undirected graphs')
+        raise Exception('spanning tree not defined for undirected graphs')
 
     # Count the number of incoming edges to each node
     num_incoming = {}
-    for n in g.nodes():
-        num_incoming[n] = 0
-    for e in g.edges():
-        print e[1]
-        num_incoming[e[1]] += 1
+
+    for node in g.nodes():
+        num_incoming[node] = 0
+    for edge in g.edges():
+        print edge[1]
+        num_incoming[edge[1]] += 1
 
     return num_incoming
-
-
-def top_sort(g):
-    """Returns a (potentially partial) topological sort of g.
-    
-    Args:
-    - g: a directed graph
-    
-    Return value:
-    A list L of nodes of g in topological order, i.e. such that there are
-    no edges going from the L[i]-th node to any of the nodes in L[0:i]. The
-    return list might not contain all nodes of g if a topological order for 
-    all nodes cannot be found (eg. if g has cycles).
-    """
-    
-    if isinstance(g, Graph):
-        raise UnsupportedGraphType('spanning tree not defined for undirected graphs')
-
-    # Count the number of incoming edges to each node
-    num_incoming = {}
-    for n in g.nodes():
-        num_incoming[n] = 0
-    for e in g.edges():
-        num_incoming[e[1]] += 1
-        
-    # Queue of nodes with no incoming edges
-    roots = deque([])
-    output = []
-    for n in g.nodes():
-        if num_incoming[n] == 0:
-            roots.append(n)
-    
-    while len(roots) > 0:
-        n = roots.popleft()
-        output.append(n)
-        for adj in g.neighbors(n):
-            num_incoming[adj] -= 1
-            if num_incoming[adj] == 0:
-                roots.append(adj)
-                
-    return output
         
 def components(g):
-    """Finds the connected components of the input graph.
-
-    Return value:
-    A list C of connected components (or strongly connected components if g is
-    directed). 
-    """
     return g.components()
