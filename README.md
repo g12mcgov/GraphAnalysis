@@ -22,7 +22,7 @@ $ python main.py
 Output
 =======
 
-```bash
+```pig
 grantmcgovern@gMAC:~/Dropbox/Developer/Projects/CSC222/GraphAnalysis$ python main.py 
 
 Problem #1:
