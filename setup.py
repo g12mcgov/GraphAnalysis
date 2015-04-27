@@ -10,10 +10,11 @@
 #
 #
 #
-
+import time
 from setuptools import setup, find_packages
 
 print "Setting up environment...\n"
+time.sleep(2)
 
 ## Get our requirements from our .txt file
 with open('requirements.txt') as requirements:

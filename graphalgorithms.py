@@ -1,3 +1,5 @@
+#!/usr/local/bin/python
+
 #
 #   graphalgorithms.py
 #
@@ -10,9 +12,8 @@
 #
 
 import heapq
-from Graphs.graph import *
 from collections import deque
-from Graphs.directedgraph import *
+from Graphs.directedgraph import DirectedGraph
 
 def dfs(g, start_node = None):
     """ Depth First Search for a graph. """
@@ -27,14 +28,17 @@ def dfs(g, start_node = None):
     if start_node is None: start_node = node
         
     item = deque([start_node])
+    
     output = []
     
     while len(item) > 0:
         # Pop from the right (top of queue)
         node = item.pop()
         if not visited[node]:
+            
             output.append(node)
             visited[node] = True
+            
             for adj in g.neighbors(node):
                 if not visited[adj]: item.append(adj)
     
@@ -53,9 +57,9 @@ def dijkstra(g, start_node, end_node=None):
     distance = {}
     previous = {}
     
-    for n in g.nodes():
-        previous[n] = None
-        distance[n] = float('inf')
+    for node in g.nodes():
+        previous[node] = None
+        distance[node] = float('inf')
         
     
     # Uses heap queue module
@@ -64,27 +68,27 @@ def dijkstra(g, start_node, end_node=None):
     
     while len(distance_heap) > 0:
         node_distance = heapq.heappop(distance_heap)        
-        n = node_distance[1]
+        node = node_distance[1]
        
-        if (node_distance[0]) >= (distance[n]): continue
+        if (node_distance[0]) >= (distance[node]): continue
         
-        distance[n] = node_distance[0]
+        distance[node] = node_distance[0]
         
-        if n == end_node: break
+        if node == end_node: break
         
-        for adj in g.weighted_neighbors(n):
+        for adj in g.weighted_neighbors(node):
             adj_node = adj[0]
-            edge_weight = adj[1]
+            edgeWeight = adj[1]
 
-            if edge_weight < 0: raise Exception('Cannot perform Dijkstra\'s algorithm on negative edges') 
+            if edgeWeight < 0: raise Exception('Cannot perform Dijkstra\'s algorithm on negative edges') 
             
-            new_distance = distance[n] + edge_weight
+            new_distance = distance[node] + edgeWeight
             
             if distance[adj_node] > new_distance:
-                previous[adj_node] = n
+                previous[adj_node] = node
                 heapq.heappush(distance_heap, (new_distance, adj_node))
                 
-    if end_node is None: 
+    if end_node is None:
         return (distance, previous)
     else:
         return (distance[end_node], previous)
@@ -92,18 +96,14 @@ def dijkstra(g, start_node, end_node=None):
 
 def incomingEdges(g):
     if isinstance(g, Graph):
-        raise Exception('spanning tree not defined for undirected graphs')
+        raise Exception("This does not work for undirected graphs")
 
     # Count the number of incoming edges to each node
-    num_incoming = {}
+    incoming = {}
 
-    for node in g.nodes():
-        num_incoming[node] = 0
+    for node in g.nodes(): incoming[node] = 0
     for edge in g.edges():
         print edge[1]
-        num_incoming[edge[1]] += 1
+        incoming[edge[1]] += 1
 
-    return num_incoming
-        
-def components(g):
-    return g.components()
+    return incoming

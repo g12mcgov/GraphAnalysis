@@ -1,3 +1,5 @@
+#!/usr/local/bin/python
+
 #
 #   directedgraph.py
 #
@@ -17,7 +19,7 @@ sys.path.append("../")
 
 # This is horrible Python import code
 from collections import deque
-from GraphProject.graphalgorithms import *
+from GraphProject.graphalgorithms import dfs, dijkstra, incomingEdges
 
 class DirectedGraph:
     """ Class definition for a directed graph. """
@@ -58,17 +60,24 @@ class DirectedGraph:
         else:
             raise AttributeError('edge does not exist')
         
-    # One liner methods
+    ### One liner methods ###
+
+    # Get number of vertices
     def numVertices(self): return len(self.vertices)
 
+    # Get all the nodes
     def nodes(self): return iter(self.vertices.keys())
 
+    # Get all neighboring nodes
     def neighbors(self, node): return iter([n[0] for n in self._edges[node].iteritems()])
 
+    # Get all of the weights for each neighbor (will all be 1 in our case)
     def weighted_neighbors(self, node): return self._edges[node].iteritems()
 
+    # Overrides built-in length method
     def __len__(self): return len(self.vertices)
 
+    # Gets number of edges in the graph
     def num_edges(self):
         number = 0
         for n, neighbors in self._edges.iteritems():
