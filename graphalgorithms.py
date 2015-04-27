@@ -18,7 +18,7 @@ def dfs(g, start_node = None):
     """ Depth First Search for a graph. """
     
     if not start_node is None and not start_node in g.nodes():
-        raise GraphValueError('start node does not exist')
+        raise Exception('start node does not exist')
         
     visited = {}
 
